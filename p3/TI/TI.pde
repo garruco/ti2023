@@ -1,4 +1,5 @@
 import processing.serial.*;
+import processing.svg.*;
 
 Serial myPort;
 float joystickXVal, joystickYVal, dial1Val, dial2Val, ldrVal;
@@ -48,7 +49,7 @@ void draw() {
   float yPos = map(joystickXVal, 1023, 0, -1, 1);
 
 
-  println(ldrVal);
+  //println(ldrVal);
 
   if (int(xPos) != 0 || int(yPos) != 0) {
     delay(250);
@@ -83,7 +84,12 @@ void draw() {
     Module newMod = new Module(gridX, gridY, color(255,0,0), rotationAngle, moduleIndex);
     mod.add(newMod);
     println(mod.size());
+    delay(500);
   }
+}
+
+void keyPressed() {
+  save("artboard.png");
 }
 
 void serialEvent(Serial myPort) {
