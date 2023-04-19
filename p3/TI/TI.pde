@@ -2,6 +2,7 @@ import processing.serial.*;
 
 Serial myPort;
 float joystickXVal, joystickYVal, dial1Val, dial2Val, ldrVal;
+int buttonState;
 float rotationAngle = 0;
 color squareColor;
 PShape svg;
@@ -41,14 +42,14 @@ void setup() {
 
 void draw() {
   background(255, 255, 255);
-
+  println(buttonState);
   // Calculate the position of the SVG based on the joystick values
   float xPos = map(joystickYVal, 0, 1023, -1, 1);
   float yPos = map(joystickXVal, 1023, 0, -1, 1);
 
 
   //println(ldrVal);
-  
+
   shapeMode(CENTER);
 
   if (int(xPos) != 0 || int(yPos) != 0) {
@@ -56,7 +57,6 @@ void draw() {
     // Calculate thße grid cell that the SVG is in
     gridX += int(xPos);
     gridY += int(yPos);
-    println(int(xPos));
   }
 
   gridX = constrain(gridX, 0, 2);
@@ -67,6 +67,7 @@ void draw() {
   float dialVal = map(dial1Val, 0, 1023, 0, 3);
   int nRotations = round(dialVal);
   rotationAngle = nRotations * HALF_PI;
+
   pushMatrix();
   translate((gridX + 0.5) * cellSize, (gridY + 0.5) * cellSize);
   rotate(rotationAngle);
@@ -88,11 +89,13 @@ void draw() {
     //println(mod.size());
     delay(500);
   }
+
+  if (buttonState == 1) {
+    save("artboard.png");
+    delay(500);
+  }
 }
 
-void keyPressed() {
-  save("artboard.png");
-}
 
 void serialEvent(Serial myPort) {
   try {
@@ -108,6 +111,7 @@ void serialEvent(Serial myPort) {
       dial1Val = float(data[2]);
       dial2Val = float(data[3]);
       ldrVal = float(data[4]);
+      buttonState = int(data[5]);
     }
   }
 

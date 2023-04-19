@@ -6,12 +6,14 @@ const int ldrPin = A4;
 const int redPin = 8;
 const int greenPin = 9;
 const int bluePin = 10;
+const int buttonPin = 11;
 
 void setup() {
   Serial.begin(9600);
   pinMode(redPin, OUTPUT);
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
+  pinMode(buttonPin, INPUT);
   analogWrite(redPin, 0);
   analogWrite(greenPin, 255);
   analogWrite(bluePin, 255);
@@ -24,6 +26,7 @@ void loop() {
   float dial1Val = analogRead(dial1Pin);
   float dial2Val = analogRead(dial2Pin);
   float ldrVal = analogRead(ldrPin);
+  int buttonState = digitalRead(buttonPin);
 
   // Send values to Processing over serial
   Serial.print(joystickXVal);
@@ -35,6 +38,8 @@ void loop() {
   Serial.print(dial2Val);
   Serial.print(",");
   Serial.print(ldrVal);
+  Serial.print(",");
+  Serial.print(buttonState);
   Serial.println();
 
   delay(10);  // Add a small delay to avoid flooding the serial port
