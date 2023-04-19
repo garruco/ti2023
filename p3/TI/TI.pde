@@ -42,7 +42,7 @@ void setup() {
 }
 
 void draw() {
-  background(0, 0, 50);
+  background(255, 255, 255);
 
   // Calculate the position of the SVG based on the joystick values
   float xPos = map(joystickYVal, 0, 1023, -1, 1);
@@ -72,6 +72,8 @@ void draw() {
 
   // Draw the SVG
   shapeMode(CENTER);
+  noStroke();
+  fill(255,0,0,100);
   moduleIndex = int(map(dial2Val, 0, 1023, 0, n_modules-1)); // Calculate the module index based on the dial value
   shape(modules[moduleIndex], 0, 0, width/3, height/3); // Display the chosen module
   popMatrix();
@@ -81,7 +83,7 @@ void draw() {
   }
 
   if (ldrVal <= 50) {
-    Module newMod = new Module(gridX, gridY, color(255,0,0), rotationAngle, moduleIndex);
+    Module newMod = new Module(gridX, gridY, color(255, 0, 0), rotationAngle, moduleIndex);
     mod.add(newMod);
     println(mod.size());
     delay(500);
