@@ -2,6 +2,7 @@ import processing.serial.*;
 
 Serial myPort;
 float joystickXVal, joystickYVal, dial1Val, dial2Val, ldrVal;
+float rotationAngle = 0;
 color squareColor;
 PShape svg;
 ArrayList<Module> mod = new ArrayList<Module>();
@@ -15,7 +16,7 @@ int gridX = 1, gridY = 1;
 int moduleIndex;
 
 void setup() {
-  size(902, 902);
+  size(900, 900);
   rectMode(CENTER);
 
   for (int i = 0; i < modules.length; i++) {
@@ -45,9 +46,14 @@ void draw() {
   float xPos = map(joystickYVal, 0, 1023, -1, 1);
   float yPos = map(joystickXVal, 1023, 0, -1, 1);
 
+
+  //println(ldrVal);
+  
+  shapeMode(CENTER);
+
   if (int(xPos) != 0 || int(yPos) != 0) {
     delay(250);
-    // Calculate the grid cell that the SVG is in
+    // Calculate thße grid cell that the SVG is in
     gridX += int(xPos);
     gridY += int(yPos);
     println(int(xPos));
@@ -58,35 +64,18 @@ void draw() {
 
 
   // Apply the rotation based on the dial value
-  float dialVal = map(dial1Val, 0, 1023, 0, 4);
+  float dialVal = map(dial1Val, 0, 1023, 0, 3);
   int nRotations = round(dialVal);
-  
+  rotationAngle = nRotations * HALF_PI;
   pushMatrix();
-  switch (nRotations) {
-  case 0:
-    translate(0, 0);
-    break;
-  case 1:
-    translate(cellSize, 0);
-    break;
-  case 2:
-    translate(cellSize, cellSize);
-    break;
-  case 3:
-    translate(0, cellSize);
-    break;
-  }
+  translate((gridX + 0.5) * cellSize, (gridY + 0.5) * cellSize);
+  rotate(rotationAngle);
 
-  translate(gridX * cellSize, gridY * cellSize);
-
-  rotate(radians(nRotations * 90));
-
-
-  println("X: " + gridX + "   Y:" + gridY);
-
-
-  fill(c);
-  shape(modules[module], 0, 0, cellSize, cellSize); // Display the chosen module
+  // Draw the SVG
+  noStroke();
+  fill(255, 0, 0, 100);
+  moduleIndex = int(map(dial2Val, 0, 1023, 0, n_modules-1)); // Calculate the module index based on the dial value
+  shape(modules[moduleIndex], 0, 0, width/3, height/3); // Display the chosen module
   popMatrix();
 
   for (int v = 0; v < mod.size(); v++) {

@@ -16,6 +16,7 @@ class Module {
 
 
   void display() {
+    shapeMode(CORNER);
     pushMatrix();
     
     switch (nRotations) {
@@ -35,11 +36,7 @@ class Module {
 
     translate(gridX * cellSize, gridY * cellSize);
 
-    rotate(radians(nRotations * 90));
-
-
-    println("X: " + gridX + "   Y:" + gridY);
-
+    rotate(nRotations * HALF_PI);
 
     fill(c);
     shape(modules[module], 0, 0, cellSize, cellSize); // Display the chosen module
