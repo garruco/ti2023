@@ -1,9 +1,7 @@
 import processing.serial.*;
-import processing.svg.*;
 
 Serial myPort;
 float joystickXVal, joystickYVal, dial1Val, dial2Val, ldrVal;
-float rotationAngle = 0;
 color squareColor;
 PShape svg;
 ArrayList<Module> mod = new ArrayList<Module>();
@@ -13,12 +11,11 @@ PShape modules[] = new PShape[n_modules];
 int gridSize = 3;
 int cellSize;
 
-int prev_gridX, prev_gridY;
 int gridX = 1, gridY = 1;
 int moduleIndex;
 
 void setup() {
-  size(800, 800);
+  size(902, 902);
   rectMode(CENTER);
 
   for (int i = 0; i < modules.length; i++) {
@@ -26,7 +23,7 @@ void setup() {
     modules[i].disableStyle();
   }
 
-  printArray(Serial.list());
+  //printArray(Serial.list());
 
   // Open the serial port
   myPort = new Serial(this, Serial.list()[1], 9600);
@@ -38,7 +35,7 @@ void setup() {
   squareColor = color(255, 255, 0);
 
   // Calculate the size of each grid cell
-  cellSize = width / gridSize;
+  cellSize = floor( width / gridSize);
 }
 
 void draw() {
@@ -47,9 +44,6 @@ void draw() {
   // Calculate the position of the SVG based on the joystick values
   float xPos = map(joystickYVal, 0, 1023, -1, 1);
   float yPos = map(joystickXVal, 1023, 0, -1, 1);
-
-
-  //println(ldrVal);
 
   if (int(xPos) != 0 || int(yPos) != 0) {
     delay(250);
@@ -65,17 +59,34 @@ void draw() {
 
   // Apply the rotation based on the dial value
   float dialVal = map(dial1Val, 0, 1023, 0, 4);
-  rotationAngle = round(dialVal) * HALF_PI;
+  int nRotations = round(dialVal);
+  
   pushMatrix();
-  translate((gridX + 0.5) * cellSize, (gridY + 0.5) * cellSize);
-  rotate(rotationAngle);
+  switch (nRotations) {
+  case 0:
+    translate(0, 0);
+    break;
+  case 1:
+    translate(cellSize, 0);
+    break;
+  case 2:
+    translate(cellSize, cellSize);
+    break;
+  case 3:
+    translate(0, cellSize);
+    break;
+  }
 
-  // Draw the SVG
-  shapeMode(CENTER);
-  noStroke();
-  fill(255,0,0,100);
-  moduleIndex = int(map(dial2Val, 0, 1023, 0, n_modules-1)); // Calculate the module index based on the dial value
-  shape(modules[moduleIndex], 0, 0, width/3, height/3); // Display the chosen module
+  translate(gridX * cellSize, gridY * cellSize);
+
+  rotate(radians(nRotations * 90));
+
+
+  println("X: " + gridX + "   Y:" + gridY);
+
+
+  fill(c);
+  shape(modules[module], 0, 0, cellSize, cellSize); // Display the chosen module
   popMatrix();
 
   for (int v = 0; v < mod.size(); v++) {
@@ -83,9 +94,9 @@ void draw() {
   }
 
   if (ldrVal <= 50) {
-    Module newMod = new Module(gridX, gridY, color(255, 0, 0), rotationAngle, moduleIndex);
+    Module newMod = new Module(gridX, gridY, color(255, 0, 0), nRotations, moduleIndex);
     mod.add(newMod);
-    println(mod.size());
+    //println(mod.size());
     delay(500);
   }
 }
