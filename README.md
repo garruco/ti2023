@@ -1,6 +1,6 @@
 # Interactive Modular Art Generator
 
-This project is an interactive art generator created for the "Técnologias de Interfaces" subject on the Msc of Design and Multimedia in University of Coimbra. It combines Arduino and Processing to create a user-friendly interface for generating and customizing modular art designs. Users can control various parameters using a joystick, potentiometer, LDR, and a button to create unique and engaging artwork.
+This project is an interactive art generator created for the "Tecnologias de Interfaces" subject of the Master in Design and Multimedia in University of Coimbra. It combines Arduino and Processing to create a user-friendly interface for generating and customizing modular art designs. Users can control various parameters using a joystick, potentiometer, LDR, and a button to create unique and engaging artwork.
 
 ## Arduino Sketch
 
