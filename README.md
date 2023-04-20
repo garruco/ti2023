@@ -6,13 +6,13 @@ This project is an interactive art generator created for the "Tecnologias de Int
 
 The Arduino sketch reads input from various components including a joystick, two potentiometers (dials), an LDR (Light Dependent Resistor), and a button. The joystick controls the position of the module in the grid, dial1 controls the rotation of the module, dial2 selects the module, the LDR adds a module to the canvas, and the button saves the artwork as an image.
 
-You can find the Arduino sketch in the `arduino_code.ino` file.
+You can find the Arduino sketch in the `arduino.ino` file.
 
 ## Processing Sketch
 
 The Processing sketch receives the values from the Arduino and updates the visual display accordingly. It uses the input values to control the grid position, rotation, module selection, and addition of modules to the canvas. Users can also save their artwork as a PNG image by pressing the button.
 
-You can find the Processing sketch in the `processing_code.pde` file.
+You can find the Processing sketch in the `p3.pde` file.
 
 ## Setup and Usage
 
@@ -30,9 +30,9 @@ To set up the hardware, you will need the following components:
 ### Software Installation
 
 1. Install the [Arduino IDE](https://www.arduino.cc/en/software) and [Processing](https://processing.org/download/) on your computer.
-2. Upload the `arduino_code.ino` sketch to your Arduino board.
-3. Open the `processing_code.pde` sketch in Processing.
-4. Update the serial port in the `processing_code.pde` sketch to match the port used by your Arduino board.
+2. Upload the `arduino.ino` sketch to your Arduino board.
+3. Open the `p3.pde` sketch in Processing.
+4. Update the serial port in the `p3.pde` sketch to match the port used by your Arduino board.
 
 ### Usage
 
