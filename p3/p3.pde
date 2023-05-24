@@ -1,4 +1,10 @@
 import processing.serial.*;
+import gab.opencv.*;
+import processing.video.*;
+import java.awt.Rectangle;
+
+Capture video;
+OpenCV opencv;
 
 Serial myPort;
 float joystickXVal, joystickYVal, dial1Val, dial2Val, ldrVal;
@@ -19,6 +25,10 @@ void setup() {
   size(900, 900);
   rectMode(CENTER);
 
+  video = new Capture(this, 640/2, 480/2);
+  opencv = new OpenCV(this, 640/2, 480/2);
+  video.start();
+
   for (int i = 0; i < modules.length; i++) {
     modules[i] = loadShape("modules/" + i + ".svg");
     modules[i].disableStyle();
@@ -31,29 +41,63 @@ void setup() {
 
 void draw() {
   background(255, 255, 255);
-  println(buttonState);
-  shapeMode(CORNER);
 
-  updateGridPosition();
+  if (video.available()) {
+    video.read();
+  }
+  opencv.loadImage(video);
+  image(video, 0, 0);
 
-  int rotationCount = round(map(dial1Val, 0, 1023, 0, 3));
-  color fillColor = color(255, 0, 0, 100);
-  moduleIndex = int(map(dial2Val, 0, 1023, 0, n_modules - 1));
-  drawCurrentModule(gridX, gridY, rotationCount, fillColor, moduleIndex, cellSize, cellSize);
+  // Detecting bright spots
+  opencv.threshold(200);  // Change this value to match your flashlight brightness
+  noFill();
+  stroke(255, 0, 0);
 
+  // Finding contours
+  for (Contour contour : opencv.findContours()) {
+    contour.draw();
+    float area = contour.area();
+    println("Area: " + area);
+
+    // If the contour area is large, print hello
+    if (area > 100) {  // Change this value to match your flashlight area
+      Rectangle boundingRect = contour.getBoundingBox();
+      int centroidX = boundingRect.x + boundingRect.width / 2;
+      int centroidY = boundingRect.y + boundingRect.height / 2;
+      gridX = (int) ((centroidX * 2.0 * width) / (video.width * cellSize));
+      gridY = (int) ((centroidY * 2.0 * height) / (video.height * cellSize));
+
+
+      gridX = constrain(gridX, 0, gridSize - 1);
+      gridY = constrain(gridY, 0, gridSize - 1);
+
+      println("Hello, grid position: (" + gridX + ", " + gridY + ")");
+    }
+
+
+    println(buttonState);
+    shapeMode(CORNER);
+
+
+    int rotationCount = round(map(dial1Val, 0, 1023, 0, 3));
+    color fillColor = color(255, 0, 0, 100);
+    moduleIndex = int(map(dial2Val, 0, 1023, 0, n_modules - 1));
+    drawCurrentModule(gridX, gridY, rotationCount, fillColor, moduleIndex, cellSize, cellSize);
+
+
+    if (area > 1000) {  // Change this value to match your flashlight area
+      Module newMod = new Module(gridX, gridY, color(255, 0, 0), rotationCount, moduleIndex);
+      mod.add(newMod);
+      delay(1000);
+    }
+
+    if (buttonState == 1) {
+      save("artboard.png");
+      delay(500);
+    }
+  }
   for (int v = 0; v < mod.size(); v++) {
     mod.get(v).display();
-  }
-
-  if (ldrVal <= 50) {
-    Module newMod = new Module(gridX, gridY, color(255, 0, 0), rotationCount, moduleIndex);
-    mod.add(newMod);
-    delay(500);
-  }
-
-  if (buttonState == 1) {
-    save("artboard.png");
-    delay(500);
   }
 }
 
@@ -75,20 +119,6 @@ void serialEvent(Serial myPort) {
   }
 }
 
-void updateGridPosition() {
-  float xPos = map(joystickYVal, 0, 1023, -1, 1);
-  float yPos = map(joystickXVal, 1023, 0, -1, 1);
-
-  if (int(xPos) != 0 || int(yPos) != 0) {
-    delay(250);
-    gridX += int(xPos);
-    gridY += int(yPos);
-  }
-
-  gridX = constrain(gridX, 0, 2);
-  gridY = constrain(gridY, 0, 2);
-}
-
 void drawCurrentModule(int gridX, int gridY, int rotationCount, color fillColor, int moduleIndex, float width, float height) {
   pushMatrix();
 
@@ -108,7 +138,7 @@ void drawCurrentModule(int gridX, int gridY, int rotationCount, color fillColor,
   }
 
   translate(gridX * cellSize, gridY * cellSize);
-  
+
   rotate(rotationCount * HALF_PI);
 
   noStroke();
