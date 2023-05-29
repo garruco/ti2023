@@ -21,6 +21,9 @@ int cellSize;
 int gridX = 1, gridY = 1;
 int moduleIndex;
 
+color[] referenceColors = {color(255, 0, 0), color(0, 255, 102), color(0, 77, 255)};
+int selectedColor;
+
 void setup() {
   size(900, 900);
   rectMode(CENTER);
@@ -48,10 +51,14 @@ void draw() {
   opencv.loadImage(video);
   image(video, 0, 0);
 
+  int centerPixel = video.pixels[video.width/2 + video.height/2*video.width];
+  selectedColor = findClosestColor(centerPixel);
+
+  fill(selectedColor);
+  ellipse(width/2, height/2, 100, 100);
+
   // Detecting bright spots
   opencv.threshold(200);  // Change this value to match your flashlight brightness
-  noFill();
-  stroke(255, 0, 0);
 
   // Finding contours
   for (Contour contour : opencv.findContours()) {
@@ -82,13 +89,12 @@ void draw() {
 
 
     int rotationCount = round(map(dial1Val, 0, 1023, 0, 3));
-    color fillColor = color(255, 0, 0, 100);
     moduleIndex = int(map(dial2Val, 0, 1023, 0, n_modules - 1));
-    drawCurrentModule(gridX, gridY, rotationCount, fillColor, moduleIndex, cellSize, cellSize);
+    drawCurrentModule(gridX, gridY, rotationCount, color(selectedColor,50), moduleIndex, cellSize, cellSize);
 
 
     if (area > 1000) {  // Change this value to match your flashlight area
-      Module newMod = new Module(gridX, gridY, color(255, 0, 0), rotationCount, moduleIndex);
+      Module newMod = new Module(gridX, gridY, selectedColor, rotationCount, moduleIndex);
       mod.add(newMod);
       delay(1000);
     }
@@ -121,7 +127,7 @@ void serialEvent(Serial myPort) {
   }
 }
 
-void drawCurrentModule(int gridX, int gridY, int rotationCount, color fillColor, int moduleIndex, float width, float height) {
+void drawCurrentModule(int gridX, int gridY, int rotationCount, color selectedColor, int moduleIndex, float width, float height) {
   pushMatrix();
 
   switch (rotationCount) {
@@ -144,7 +150,7 @@ void drawCurrentModule(int gridX, int gridY, int rotationCount, color fillColor,
   rotate(rotationCount * HALF_PI);
 
   noStroke();
-  fill(fillColor);
+  fill(selectedColor);
   shape(modules[moduleIndex], 0, 0, width, height);
   popMatrix();
 }
