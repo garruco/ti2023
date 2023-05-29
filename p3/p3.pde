@@ -59,8 +59,6 @@ void draw() {
 
   // Detecting bright spots
   opencv.threshold(200);  // Change this value to match your flashlight brightness
-  noFill();
-  stroke(255, 0, 0);
 
   // Finding contours
   for (Contour contour : opencv.findContours()) {
