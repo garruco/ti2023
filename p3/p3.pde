@@ -25,8 +25,8 @@ void setup() {
   size(900, 900);
   rectMode(CENTER);
 
-  video = new Capture(this, 640/2, 480/2);
-  opencv = new OpenCV(this, 640/2, 480/2);
+  video = new Capture(this, 900, 900);
+  opencv = new OpenCV(this, 900, 900);
   video.start();
 
   for (int i = 0; i < modules.length; i++) {
@@ -62,16 +62,18 @@ void draw() {
     // If the contour area is large, print hello
     if (area > 100) {  // Change this value to match your flashlight area
       Rectangle boundingRect = contour.getBoundingBox();
-      int centroidX = boundingRect.x + boundingRect.width / 2;
-      int centroidY = boundingRect.y + boundingRect.height / 2;
-      gridX = (int) ((centroidX * 2.0 * width) / (video.width * cellSize));
-      gridY = (int) ((centroidY * 2.0 * height) / (video.height * cellSize));
+      int centroidX = boundingRect.x;
+      int centroidY = boundingRect.y ;
+      gridX = (int) ((centroidX) / (cellSize));
+      gridY = (int) ((centroidY) / (cellSize));
 
+      println(centroidX, centroidY);
 
       gridX = constrain(gridX, 0, gridSize - 1);
       gridY = constrain(gridY, 0, gridSize - 1);
 
-      println("Hello, grid position: (" + gridX + ", " + gridY + ")");
+
+      //println("Hello, grid position: (" + gridX + ", " + gridY + ")");
     }
 
 
