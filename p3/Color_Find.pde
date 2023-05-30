@@ -8,17 +8,7 @@ int findClosestColor(int pixelColor) {
       minDist = currentDist;
       colorIndex = i;
     }
-  }
-
-  /*for (color refColor : referenceColors) {
-    float currentDist = colorDist(pixelColor, refColor);
-    if (currentDist < minDist) {
-      minDist = currentDist;
-      closestColor = refColor;
-    }
-  }*/
-  
-  
+  }  
   
   return colorIndex;
 }
