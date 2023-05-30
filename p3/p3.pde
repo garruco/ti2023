@@ -138,7 +138,7 @@ void serialEvent(Serial myPort) {
 
       if (debug) {
         for (int i = 0; i < data.length; i++) {
-          println("data" + i + " " + data[i]);
+          println("data" i + " " + data[i]);
         }
       }
 
