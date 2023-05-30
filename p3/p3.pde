@@ -52,6 +52,7 @@ void setup() {
 
 void draw() {
   background(255, 255, 255);
+  //println(mouseX + "   " + mouseY);
 
   pushMatrix();
 
@@ -67,8 +68,12 @@ void draw() {
   opencv.loadImage(video);
   image(video, 0, 0);
 
+
   int pixelPos = 700 + (video.height/2 * video.width);
   int centerPixel = video.pixels[pixelPos]; //700
+  //video.pixels[pos] = color(255);
+  //video.updatePixels();
+
 
   int pixelColorIndex = findClosestColor(centerPixel);
   if (realColors[pixelColorIndex] != selectedColor) {
@@ -96,6 +101,9 @@ void draw() {
       int centroidX = boundingRect.x;
       int centroidY = boundingRect.y ;
 
+      /*if(abs(centroidX - 462) < 60) break;
+       if(abs(centroidY - 531) < 60) break;*/
+
       PVector currentCell = getCurrentCell(centroidX, centroidY);
       gridX = (int) currentCell.x;
       gridY = (int) currentCell.y;
@@ -104,8 +112,13 @@ void draw() {
 
       gridX = constrain(gridX, 0, gridSize - 1);
       gridY = constrain(gridY, 0, gridSize - 1);
+
+
+      //println("Hello, grid position: (" + gridX + ", " + gridY + ")");
     }
 
+
+    //println(buttonState);
     shapeMode(CORNER);
 
 
@@ -137,13 +150,9 @@ void serialEvent(Serial myPort) {
     String dataString = myPort.readStringUntil('\n');
     if (dataString != null) {
       String[] data = dataString.trim().split(",");
-
-      if (debug) {
-        for (int i = 0; i < data.length; i++) {
-          println(i + " " + data[i]);
-        }
-      }
-
+      /*for (int i = 0; i < data.length; i++) {
+       println(i + " " + data[i]);
+       }*/
       if (!Float.isNaN(float(data[0]))) counter = float(data[0]);
       if (!Float.isNaN(float(data[1]))) counter2 = float(data[1]);
     }
