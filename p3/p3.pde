@@ -31,9 +31,9 @@ int gridX = 1, gridY = 1;
 int moduleIndex;
 
 // Define colors
-color[] referenceColors = {color(8, 8, 11), color(6, 22, 46), color(5, 40, 42), color(48, 18, 22)};
-color[] realColors = {color(15, 21, 35), color(42, 37, 138), color(47, 82, 71), color(236, 38, 38)};
-String[] charColors = {"U", "P", "O", "I"};
+color[] referenceColors = {color(8, 8, 11), color(6, 22, 46), color(5, 40, 42), color(48, 18, 22)}; // Reference colors for the computer vision to compare
+color[] realColors = {color(15, 21, 35), color(42, 37, 138), color(47, 82, 71), color(236, 38, 38)}; // Real Colors to convert from  the reference colors
+String[] charColors = {"U", "P", "O", "I"}; // Characters to send via serial to arduino for the RGB LED to light up
 int selectedColor;
 
 void setup() {
