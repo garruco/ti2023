@@ -1,4 +1,6 @@
+// Module class
 class Module {
+  // Variables for module's properties
   int gridX, gridY;
   color c;
   int nRotations;
@@ -6,6 +8,7 @@ class Module {
   int gridSize = 3;
   int cellSize = width / gridSize;
 
+  // Constructor
   Module(int gridX, int gridY, color c, int nRotations, int module) {
     this.gridX = gridX;
     this.gridY = gridY;
@@ -14,14 +17,14 @@ class Module {
     this.module = module;
   }
 
-
+  // Method to display the module
   void display() {
     shapeMode(CORNER);
     pushMatrix();
-    
+
     switch (nRotations) {
     case 0:
-    translate(0, 0);
+      translate(0, 0);
       break;
     case 1:
       translate(cellSize, 0);
