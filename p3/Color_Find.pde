@@ -1,15 +1,26 @@
 int findClosestColor(int pixelColor) {
   float minDist = Float.MAX_VALUE;
-  int closestColor = 0;
+  int colorIndex = 0;
 
-  for (color refColor : referenceColors) {
+  for(int i = 0; i < referenceColors.length; i++){
+    float currentDist = colorDist(pixelColor, referenceColors[i]);
+    if (currentDist < minDist) {
+      minDist = currentDist;
+      colorIndex = i;
+    }
+  }
+
+  /*for (color refColor : referenceColors) {
     float currentDist = colorDist(pixelColor, refColor);
     if (currentDist < minDist) {
       minDist = currentDist;
       closestColor = refColor;
     }
-  }
-  return closestColor;
+  }*/
+  
+  
+  
+  return colorIndex;
 }
 
 float colorDist(int c1, int c2) {

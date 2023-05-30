@@ -7,21 +7,28 @@ Capture video;
 OpenCV opencv;
 
 Serial myPort;
-float joystickXVal, joystickYVal, dial1Val, dial2Val, ldrVal;
+float counter, counter2;
 int buttonState;
 float rotationAngle = 0;
 PShape svg;
 ArrayList<Module> mod = new ArrayList<Module>();
 
+boolean debug = false;
+
+int lightAreaThreshold = 1890; //area needed to stamp shape
+
 int n_modules = 15;
 PShape modules[] = new PShape[n_modules];
 int gridSize = 3;
 int cellSize;
+boolean printLastFrame = false;
 
 int gridX = 1, gridY = 1;
 int moduleIndex;
 
-color[] referenceColors = {color(255, 0, 0), color(0, 255, 102), color(0, 77, 255)};
+color[] referenceColors = {color(8, 8, 11), color(6, 22, 46), color(5, 40, 42), color(48, 18, 22)};
+color[] realColors = {color(15, 21, 35), color(42, 37, 138), color(47, 82, 71), color(236, 38, 38)};
+String[] charColors = {"U", "P", "O", "I"};
 int selectedColor;
 
 void setup() {
@@ -44,6 +51,15 @@ void setup() {
 
 void draw() {
   background(255, 255, 255);
+  //println(mouseX + "   " + mouseY);
+
+  pushMatrix();
+
+  translate(width/2, height/2);
+  rotate(HALF_PI);
+  scale(1, -1);
+  translate(-width/2, -height/2);
+
 
   if (video.available()) {
     video.read();
@@ -51,11 +67,22 @@ void draw() {
   opencv.loadImage(video);
   image(video, 0, 0);
 
-  int centerPixel = video.pixels[video.width/2 + video.height/2*video.width];
-  selectedColor = findClosestColor(centerPixel);
+
+  int pixelPos = 700 + (video.height/2 * video.width);
+  int centerPixel = video.pixels[pixelPos]; //700
+  //video.pixels[pos] = color(255);
+  //video.updatePixels();
+
+
+  int pixelColorIndex = findClosestColor(centerPixel);
+  if (realColors[pixelColorIndex] != selectedColor) {
+    selectedColor = realColors[pixelColorIndex];
+    myPort.write(charColors[pixelColorIndex]);
+  }
+
 
   fill(selectedColor);
-  ellipse(width/2, height/2, 100, 100);
+  ellipse(width/2, height/3, 100, 100);
 
   // Detecting bright spots
   opencv.threshold(200);  // Change this value to match your flashlight brightness
@@ -64,17 +91,23 @@ void draw() {
   for (Contour contour : opencv.findContours()) {
     contour.draw();
     float area = contour.area();
-    println("Area: " + area);
+    if (debug)
+      println("Area: " + area);
 
     // If the contour area is large, print hello
     if (area > 100) {  // Change this value to match your flashlight area
       Rectangle boundingRect = contour.getBoundingBox();
       int centroidX = boundingRect.x;
       int centroidY = boundingRect.y ;
-      gridX = (int) ((centroidX) / (cellSize));
-      gridY = (int) ((centroidY) / (cellSize));
 
-      println(centroidX, centroidY);
+      /*if(abs(centroidX - 462) < 60) break;
+       if(abs(centroidY - 531) < 60) break;*/
+
+      PVector currentCell = getCurrentCell(centroidX, centroidY);
+      gridX = (int) currentCell.x;
+      gridY = (int) currentCell.y;
+
+      if (debug)println(centroidX, centroidY);
 
       gridX = constrain(gridX, 0, gridSize - 1);
       gridY = constrain(gridY, 0, gridSize - 1);
@@ -84,20 +117,20 @@ void draw() {
     }
 
 
-    println(buttonState);
+    //println(buttonState);
     shapeMode(CORNER);
 
 
-    int rotationCount = round(map(dial1Val, 0, 1023, 0, 3));
-    moduleIndex = int(map(dial2Val, 0, 1023, 0, n_modules - 1));
-    drawCurrentModule(gridX, gridY, rotationCount, color(selectedColor,50), moduleIndex, cellSize, cellSize);
+    int rotationCount = int(counter2);
+    moduleIndex = (int) counter;
+    drawCurrentModule(gridX, gridY, rotationCount, color(selectedColor, 50), moduleIndex, cellSize, cellSize);
 
-
-    if (area > 1000) {  // Change this value to match your flashlight area
+    if (area > lightAreaThreshold && !printLastFrame) {  // Change this value to match your flashlight area
       Module newMod = new Module(gridX, gridY, selectedColor, rotationCount, moduleIndex);
       mod.add(newMod);
-      delay(1000);
-    }
+      printLastFrame = true;
+    } else if (area < 1000)
+      printLastFrame=false;
 
     if (buttonState == 1) {
       save("artboard.png");
@@ -107,6 +140,8 @@ void draw() {
   for (int v = 0; v < mod.size(); v++) {
     mod.get(v).display();
   }
+
+  popMatrix();
 }
 
 void serialEvent(Serial myPort) {
@@ -114,16 +149,14 @@ void serialEvent(Serial myPort) {
     String dataString = myPort.readStringUntil('\n');
     if (dataString != null) {
       String[] data = dataString.trim().split(",");
-      joystickXVal = float(data[0]);
-      joystickYVal = float(data[1]);
-      dial1Val = float(data[2]);
-      dial2Val = float(data[3]);
-      ldrVal = float(data[4]);
-      buttonState = int(data[5]);
+      /*for (int i = 0; i < data.length; i++) {
+       println(i + " " + data[i]);
+       }*/
+      if (!Float.isNaN(float(data[0]))) counter = float(data[0]);
+      if (!Float.isNaN(float(data[1]))) counter2 = float(data[1]);
     }
   }
   catch (RuntimeException e) {
-    e.printStackTrace();
   }
 }
 
@@ -153,4 +186,57 @@ void drawCurrentModule(int gridX, int gridY, int rotationCount, color selectedCo
   fill(selectedColor);
   shape(modules[moduleIndex], 0, 0, width, height);
   popMatrix();
+}
+
+PVector getCurrentCell(float _centroidX, float _centroidY) {
+  int currentX = 2;
+  int currentY = 2;
+
+  //println("X: " + _centroidX + "   Y: " + _centroidY);
+
+  float xPaddingLeft = 220;
+  float xPaddingRight = 230;
+  float yPaddingTop = 35;
+  float yPaddingBottom = 80;
+
+  /*
+  stroke(255,0,0);
+   line(xPaddingLeft, 0, xPaddingLeft, height);
+   line(width - xPaddingRight, 0, width - xPaddingRight, height);
+   
+   line(0, yPaddingTop, width, yPaddingTop);
+   line(0, height - yPaddingBottom, width, height - yPaddingBottom);
+   */
+
+  int nGaps = 3;
+
+  float xGap = (width - xPaddingLeft - xPaddingRight) / nGaps;
+  float yGap = (height - yPaddingTop - yPaddingBottom) / nGaps;
+
+
+  for (int i = 0; i < nGaps; i ++) {
+    float currentCheckingX = xPaddingLeft + (i+1) * xGap;
+    if (_centroidX < currentCheckingX) {
+      currentX = i;
+      break;
+    }
+  }
+
+  for (int i = 0; i < nGaps; i ++) {
+    float currentCheckingY = yPaddingTop + (i+1) * yGap;
+    if (_centroidY < currentCheckingY) {
+      currentY = i;
+      break;
+    }
+  }
+
+  return new PVector(currentX, currentY);
+}
+
+void mousePressed() {
+  export();
+}
+
+void export() {
+  mod = new ArrayList<Module>();
 }
