@@ -51,7 +51,6 @@ void setup() {
 
 void draw() {
   background(255, 255, 255);
-  //println("butao" + buttonState);
 
   pushMatrix();
 
@@ -75,10 +74,7 @@ void draw() {
 
 
   int pixelPos = 700 + (video.height/2 * video.width);
-  int centerPixel = video.pixels[pixelPos]; //700
-  //video.pixels[pos] = color(255);
-  //video.updatePixels();
-
+  int centerPixel = video.pixels[pixelPos];
 
   int pixelColorIndex = findClosestColor(centerPixel);
   if (realColors[pixelColorIndex] != selectedColor) {
@@ -95,23 +91,18 @@ void draw() {
   // Detecting bright spots
   opencv.threshold(200);  // Change this value to match your flashlight brightness
 
-
-
   // Finding contours
   for (Contour contour : opencv.findContours()) {
     if (debug) contour.draw();
     float area = contour.area();
 
-    if(debug)println("Area: " + area);
+    if (debug)println("Area: " + area);
 
-    // If the contour area is large, print hello
     if (area > 500) {  // Change this value to match your flashlight area
       Rectangle boundingRect = contour.getBoundingBox();
       int centroidX = boundingRect.x;
       int centroidY = boundingRect.y ;
 
-      /*if(abs(centroidX - 462) < 60) break;
-       if(abs(centroidY - 531) < 60) break;*/
 
       PVector currentCell = getCurrentCell(centroidX, centroidY);
       gridX = (int) currentCell.x;
@@ -123,11 +114,9 @@ void draw() {
       gridY = constrain(gridY, 0, gridSize - 1);
 
 
-      //println("Hello, grid position: (" + gridX + ", " + gridY + ")");
+      if (debug) println("grid position: (" + gridX + ", " + gridY + ")");
     }
 
-
-    //println(buttonState);
     shapeMode(CORNER);
 
 
@@ -148,8 +137,6 @@ void draw() {
     }
   }
 
-  //if (buttonState!=0) export();
-
   popMatrix();
 }
 
@@ -157,18 +144,15 @@ void serialEvent(Serial myPort) {
   try {
     String dataString = myPort.readStringUntil('\n');
     if (dataString != null) {
-      //println(dataString);
       if (dataString.indexOf("button") >= 0) {
         export();
       }
       String[] data = dataString.trim().split(",");
-      //println("length: " + data.length);
       for (int i = 0; i <= data.length; i++) {
-        //println(i + " " + data[i]);
+        if (debug) println(i + " " + data[i]);
       }
       if (!Float.isNaN(float(data[0]))) counter = float(data[0]);
       if (!Float.isNaN(float(data[1]))) counter2 = float(data[1]);
-      //if (!Float.isNaN(float(data[2]))) buttonState = float(data[2]);
     }
   }
   catch (RuntimeException e) {
@@ -211,21 +195,21 @@ PVector getCurrentCell(float _centroidX, float _centroidY) {
   int currentX = 2;
   int currentY = 2;
 
-  //println("X: " + _centroidX + "   Y: " + _centroidY);
+  if (debug) println("X: " + _centroidX + "   Y: " + _centroidY);
 
   float xPaddingLeft = 220;
   float xPaddingRight = 230;
   float yPaddingTop = 70;
   float yPaddingBottom = 60;
 
-  /*
-  stroke(255,0,0);
-   line(xPaddingLeft, 0, xPaddingLeft, height);
-   line(width - xPaddingRight, 0, width - xPaddingRight, height);
-   
-   line(0, yPaddingTop, width, yPaddingTop);
-   line(0, height - yPaddingBottom, width, height - yPaddingBottom);
-   */
+  if (debug) {
+    stroke(255, 0, 0);
+    line(xPaddingLeft, 0, xPaddingLeft, height);
+    line(width - xPaddingRight, 0, width - xPaddingRight, height);
+
+    line(0, yPaddingTop, width, yPaddingTop);
+    line(0, height - yPaddingBottom, width, height - yPaddingBottom);
+  }
 
   int nGaps = 3;
 
@@ -257,8 +241,8 @@ void mousePressed() {
 }
 
 void export() {
-  if(mod.size() < 1) return;
-  println("EXPORT");
+  if (mod.size() < 1) return;
+  if (debug) println("EXPORTED");
   save("creation.png");
   mod = new ArrayList<Module>();
 }
