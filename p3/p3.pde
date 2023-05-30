@@ -100,6 +100,8 @@ void draw() {
       gridX = (int) currentCell.x;
       gridY = (int) currentCell.y;
 
+      if (debug)println(centroidX, centroidY);
+
       gridX = constrain(gridX, 0, gridSize - 1);
       gridY = constrain(gridY, 0, gridSize - 1);
     }
@@ -138,7 +140,7 @@ void serialEvent(Serial myPort) {
 
       if (debug) {
         for (int i = 0; i < data.length; i++) {
-          println("data" i + " " + data[i]);
+          println(i + " " + data[i]);
         }
       }
 
@@ -154,21 +156,21 @@ PVector getCurrentCell(float _centroidX, float _centroidY) {
   int currentX = 2;
   int currentY = 2;
 
-  if (debug)println("X: " + _centroidX + "   Y: " + _centroidY);
+  //println("X: " + _centroidX + "   Y: " + _centroidY);
 
   float xPaddingLeft = 220;
   float xPaddingRight = 230;
   float yPaddingTop = 35;
   float yPaddingBottom = 80;
 
-  if (debug) {
-    stroke(255, 0, 0);
-    line(xPaddingLeft, 0, xPaddingLeft, height);
-    line(width - xPaddingRight, 0, width - xPaddingRight, height);
-
-    line(0, yPaddingTop, width, yPaddingTop);
-    line(0, height - yPaddingBottom, width, height - yPaddingBottom);
-  }
+  /*
+  stroke(255,0,0);
+   line(xPaddingLeft, 0, xPaddingLeft, height);
+   line(width - xPaddingRight, 0, width - xPaddingRight, height);
+   
+   line(0, yPaddingTop, width, yPaddingTop);
+   line(0, height - yPaddingBottom, width, height - yPaddingBottom);
+   */
 
   int nGaps = 3;
 
