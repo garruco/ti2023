@@ -59,9 +59,6 @@ void draw() {
   scale(1, -1);
   translate(-width/2, -height/2);
 
-
-
-
   if (video.available()) {
     video.read();
   }
