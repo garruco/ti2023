@@ -8,14 +8,14 @@ OpenCV opencv;
 
 Serial myPort;
 float counter, counter2;
-int buttonState;
+float buttonState;
 float rotationAngle = 0;
 PShape svg;
 ArrayList<Module> mod = new ArrayList<Module>();
 
 boolean debug = false;
 
-int lightAreaThreshold = 1890; //area needed to stamp shape
+int lightAreaThreshold = 700; //area needed to stamp shape
 
 int n_modules = 15;
 PShape modules[] = new PShape[n_modules];
@@ -51,7 +51,7 @@ void setup() {
 
 void draw() {
   background(255, 255, 255);
-  //println(mouseX + "   " + mouseY);
+  //println("butao" + buttonState);
 
   pushMatrix();
 
@@ -61,11 +61,17 @@ void draw() {
   translate(-width/2, -height/2);
 
 
+
+
   if (video.available()) {
     video.read();
   }
   opencv.loadImage(video);
-  image(video, 0, 0);
+  if (debug) image(video, 0, 0);
+
+  for (int v = 0; v < mod.size(); v++) {
+    mod.get(v).display();
+  }
 
 
   int pixelPos = 700 + (video.height/2 * video.width);
@@ -81,21 +87,25 @@ void draw() {
   }
 
 
-  fill(selectedColor);
-  ellipse(width/2, height/3, 100, 100);
+  if (debug) {
+    fill(selectedColor);
+    ellipse(width/2, height/3, 100, 100);
+  }
 
   // Detecting bright spots
   opencv.threshold(200);  // Change this value to match your flashlight brightness
 
+
+
   // Finding contours
   for (Contour contour : opencv.findContours()) {
-    contour.draw();
+    if (debug) contour.draw();
     float area = contour.area();
-    if (debug)
-      println("Area: " + area);
+
+    if(debug)println("Area: " + area);
 
     // If the contour area is large, print hello
-    if (area > 100) {  // Change this value to match your flashlight area
+    if (area > 500) {  // Change this value to match your flashlight area
       Rectangle boundingRect = contour.getBoundingBox();
       int centroidX = boundingRect.x;
       int centroidY = boundingRect.y ;
@@ -123,7 +133,7 @@ void draw() {
 
     int rotationCount = int(counter2);
     moduleIndex = (int) counter;
-    drawCurrentModule(gridX, gridY, rotationCount, color(selectedColor, 50), moduleIndex, cellSize, cellSize);
+    drawCurrentModule(gridX, gridY, rotationCount, color(selectedColor, 50), moduleIndex, cellSize, cellSize, true);
 
     if (area > lightAreaThreshold && !printLastFrame) {  // Change this value to match your flashlight area
       Module newMod = new Module(gridX, gridY, selectedColor, rotationCount, moduleIndex);
@@ -137,9 +147,8 @@ void draw() {
       delay(500);
     }
   }
-  for (int v = 0; v < mod.size(); v++) {
-    mod.get(v).display();
-  }
+
+  //if (buttonState!=0) export();
 
   popMatrix();
 }
@@ -148,19 +157,25 @@ void serialEvent(Serial myPort) {
   try {
     String dataString = myPort.readStringUntil('\n');
     if (dataString != null) {
+      //println(dataString);
+      if (dataString.indexOf("button") >= 0) {
+        export();
+      }
       String[] data = dataString.trim().split(",");
-      /*for (int i = 0; i < data.length; i++) {
-       println(i + " " + data[i]);
-       }*/
+      //println("length: " + data.length);
+      for (int i = 0; i <= data.length; i++) {
+        //println(i + " " + data[i]);
+      }
       if (!Float.isNaN(float(data[0]))) counter = float(data[0]);
       if (!Float.isNaN(float(data[1]))) counter2 = float(data[1]);
+      //if (!Float.isNaN(float(data[2]))) buttonState = float(data[2]);
     }
   }
   catch (RuntimeException e) {
   }
 }
 
-void drawCurrentModule(int gridX, int gridY, int rotationCount, color selectedColor, int moduleIndex, float width, float height) {
+void drawCurrentModule(int gridX, int gridY, int rotationCount, color selectedColor, int moduleIndex, float width, float height, boolean hasStroke) {
   pushMatrix();
 
   switch (rotationCount) {
@@ -182,7 +197,11 @@ void drawCurrentModule(int gridX, int gridY, int rotationCount, color selectedCo
 
   rotate(rotationCount * HALF_PI);
 
-  noStroke();
+  if (!hasStroke)noStroke();
+  else {
+    stroke(150);
+    strokeWeight(1);
+  }
   fill(selectedColor);
   shape(modules[moduleIndex], 0, 0, width, height);
   popMatrix();
@@ -196,8 +215,8 @@ PVector getCurrentCell(float _centroidX, float _centroidY) {
 
   float xPaddingLeft = 220;
   float xPaddingRight = 230;
-  float yPaddingTop = 35;
-  float yPaddingBottom = 80;
+  float yPaddingTop = 70;
+  float yPaddingBottom = 60;
 
   /*
   stroke(255,0,0);
@@ -238,5 +257,8 @@ void mousePressed() {
 }
 
 void export() {
+  if(mod.size() < 1) return;
+  println("EXPORT");
+  save("creation.png");
   mod = new ArrayList<Module>();
 }

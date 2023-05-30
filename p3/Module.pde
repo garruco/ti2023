@@ -38,6 +38,7 @@ class Module {
 
     rotate(nRotations * HALF_PI);
 
+    noStroke();
     fill(c);
     shape(modules[module], 0, 0, cellSize, cellSize); // Display the chosen module
     popMatrix();

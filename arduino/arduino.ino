@@ -10,6 +10,9 @@ int counter = 0, counter2 = 0;
 int currentStateCLK, currentStateCLK2;
 int lastStateCLK, lastStateCLK2;
 
+int buttonPin = 13;   // the number of the pushbutton pin
+int buttonState = 0;  // variable for reading the pushbutton status
+
 int red, green, blue;
 int redPin = 8;
 int greenPin = 9;
@@ -21,6 +24,8 @@ void setup() {
   pinMode(DT, INPUT);
   pinMode(SW, INPUT_PULLUP);
   lastStateCLK = digitalRead(CLK);  // Read the initial state of CLK
+
+  pinMode(buttonPin, INPUT_PULLUP);  // initialize the pushbutton pin as an input with pullup resistor
 
   pinMode(redPin, OUTPUT);
   pinMode(greenPin, OUTPUT);
@@ -36,22 +41,22 @@ void loop() {
 
   while (Serial.available()) {
     char incomingByte = (char)Serial.read();
-     if (incomingByte == 'U') { //black
+    if (incomingByte == 'U') {  //black
       red = 0;
       green = 0;
       blue = 0;
       changedLed = true;
-    } else if (incomingByte == 'I') { //red
+    } else if (incomingByte == 'I') {  //red
       red = 255;
       green = 0;
       blue = 0;
       changedLed = true;
-    } else if (incomingByte == 'O') { //green
+    } else if (incomingByte == 'O') {  //green
       red = 0;
       green = 255;
       blue = 0;
       changedLed = true;
-    } else if (incomingByte == 'P') { //blue
+    } else if (incomingByte == 'P') {  //blue
       red = 0;
       green = 0;
       blue = 255;
@@ -59,16 +64,19 @@ void loop() {
     }
   }
 
-if(changedLed){
-  analogWrite(redPin, 255- red);
-  analogWrite(greenPin, 255 -green);
-  analogWrite(bluePin, 255 - blue);
-}
+  if (changedLed) {
+    analogWrite(redPin, 255 - red);
+    analogWrite(greenPin, 255 - green);
+    analogWrite(bluePin, 255 - blue);
+  }
 
 
   currentStateCLK = digitalRead(CLK);  // Read the current state of CLK
 
   currentStateCLK2 = digitalRead(CLK2);  // Read the current state of CLK
+
+  buttonState = digitalRead(buttonPin);  // read the state of the pushbutton value
+
 
   if (currentStateCLK != lastStateCLK && currentStateCLK == 1) {
     if (digitalRead(DT) != currentStateCLK) {
@@ -93,10 +101,14 @@ if(changedLed){
     counter2 = counter2 % 4;
   }
 
-
   Serial.println(counter);
   Serial.print(",");
   Serial.println(counter2);
+  if (buttonState > 0) {
+    Serial.print(",");
+    Serial.println("button");
+  }
+
   Serial.println("");
 
 
