@@ -14,8 +14,8 @@ int currentStateCLK, currentStateCLK2;
 int lastStateCLK, lastStateCLK2;
 
 // Define pin and state variable for a button
-int buttonPin = 13;   // the number of the pushbutton pin
-int buttonState = 0;  // variable for reading the pushbutton status
+int buttonPin = 13;  
+int buttonState = 0; 
 
 // Initialize RGB values and define pins for the RGB LED
 int red, green, blue;
