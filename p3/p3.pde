@@ -5,26 +5,27 @@ import java.awt.Rectangle;
 
 Capture video;
 OpenCV opencv;
-
 Serial myPort;
+
+boolean debug = false;
+
 float counter, counter2;
 int buttonState;
 float rotationAngle = 0;
 PShape svg;
 ArrayList<Module> mod = new ArrayList<Module>();
 
-boolean debug = false;
-
 int lightAreaThreshold = 1890; //area needed to stamp shape
 
 int n_modules = 15;
 PShape modules[] = new PShape[n_modules];
+int moduleIndex;
+
 int gridSize = 3;
 int cellSize;
 boolean printLastFrame = false;
 
 int gridX = 1, gridY = 1;
-int moduleIndex;
 
 color[] referenceColors = {color(8, 8, 11), color(6, 22, 46), color(5, 40, 42), color(48, 18, 22)};
 color[] realColors = {color(15, 21, 35), color(42, 37, 138), color(47, 82, 71), color(236, 38, 38)};
