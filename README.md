@@ -1,46 +1,60 @@
-# Interactive Modular Art Generator
+# BRICA
 
-This project is an interactive art generator created for the "Tecnologias de Interfaces" subject of the Master in Design and Multimedia in University of Coimbra. It combines Arduino and Processing to create a user-friendly interface for generating and customizing modular art designs. Users can control various parameters using a joystick, potentiometer, LDR, and a button to create unique and engaging artwork.
+BRICA is an interactive and innovative project that combines computer vision, light detection, and Arduino controllers to manipulate SVG modules in a Processing application. The system reads data from two rotary encoders and a button to control the placement and rotation of SVG modules on a 2D grid. A light source (e.g., a flashlight) is tracked, and its position within the grid is used to stamp SVG shapes onto the canvas.
 
-## Arduino Sketch
+## Hardware Setup
 
-The Arduino sketch reads input from various components including a joystick, two potentiometers (dials), an LDR (Light Dependent Resistor), and a button. The joystick controls the position of the module in the grid, dial1 controls the rotation of the module, dial2 selects the module, the LDR adds a module to the canvas, and the button saves the artwork as an image.
+The hardware setup involves connecting rotary encoders and a button to an Arduino board.
 
-You can find the Arduino sketch in the `arduino.ino` file.
+Components needed:
 
-## Processing Sketch
+- 2 x Rotary encoders
+- 1 x Pushbutton
+- 1 x Arduino Board (Uno, Mega, or similar)
+- 1 x Breadboard
+- Jumper Wires
+- 1 x RGB LED (Common Cathode)
 
-The Processing sketch receives the values from the Arduino and updates the visual display accordingly. It uses the input values to control the grid position, rotation, module selection, and addition of modules to the canvas. Users can also save their artwork as a PNG image by pressing the button.
+### Arduino Setup
 
-You can find the Processing sketch in the `p3.pde` file.
+1. **Rotary Encoders**
+   Connect the first rotary encoder to the Arduino. Connect the CLK, DT, and SW pins of the encoder to digital pins 4, 3, and 2 on the Arduino, respectively. Connect the '+' and GND pins of the encoder to 5V and GND on the Arduino, respectively.
 
-## Setup and Usage
+Connect the second rotary encoder in the same way. Connect CLK2, DT2, and SW2 to digital pins 7, 6, and 5 on the Arduino, respectively.
 
-### Hardware Components
+2. **Pushbutton**
+   Connect one end of the pushbutton to digital pin 13 on the Arduino. Connect the other end of the pushbutton to the GND pin on the Arduino.
 
-To set up the hardware, you will need the following components:
+3. **RGB LED**
+   Connect the RGB LED's R, G, and B pins to digital pins 8, 9, and 10 on the Arduino, respectively. Connect the common cathode of the LED to the GND pin on the Arduino.
 
-1. Arduino board (e.g., Arduino Uno)
-2. Joystick
-3. 2x Potentiometers (dials)
-4. LDR (Light Dependent Resistor)
-5. Button
-6. Breadboard and jumper wires
+4. **Upload Code**
+   Once all components are connected, upload the provided Arduino code to your board.
 
-### Software Installation
+## Software Setup
 
-1. Install the [Arduino IDE](https://www.arduino.cc/en/software) and [Processing](https://processing.org/download/) on your computer.
-2. Upload the `arduino.ino` sketch to your Arduino board.
-3. Open the `p3.pde` sketch in Processing.
-4. Update the serial port in the `p3.pde` sketch to match the port used by your Arduino board.
+1. **Processing**
+   Install the Processing IDE on your computer. This is required to run the Processing sketch for this project.
 
-### Usage
+2. **Libraries**
+   You will need the following libraries for Processing:
 
-1. Run the Processing sketch.
-2. Use the joystick to move the module in the grid.
-3. Use dial1 to rotate the module.
-4. Use dial2 to select the desired module.
-5. Cover the LDR to add the current module to the canvas.
-6. Press the button to save the artwork as a PNG image.
+- OpenCV for Processing: Used for computer vision techniques.
+- Video: Required for capturing video from a webcam.
 
-Enjoy creating your unique modular art designs!
+You can install these libraries from the Processing IDE itself.
+
+3. **Running the Sketch**
+   Load the provided Processing sketch in the Processing IDE. Make sure the Arduino board is connected to your computer via USB and that the Arduino code is running. Run the Processing sketch.
+
+## Configuration
+
+The application includes debug mode (boolean debug = false;). When enabled, it provides additional information on the canvas and prints relevant data to the console. This mode can be useful for calibration, debugging, and understanding the application's inner workings.
+
+The lightAreaThreshold and the opencv.threshold() function can be adjusted according to the brightness and area of your light source.
+
+## Usage
+
+Rotate the encoders to control the shape and color on the screen. Press the button to save the current state of the artwork.
+
+Note: The Processing sketch uses computer vision techniques to respond to changes in ambient light and colors. Make sure to have some light source and color variation in the environment for a more dynamic interaction.
