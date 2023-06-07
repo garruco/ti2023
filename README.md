@@ -17,17 +17,17 @@ Components needed:
 
 ### Arduino Setup
 
-1. **Rotary Encoders**
+1. **Rotary Encoders:**
    Connect the first rotary encoder to the Arduino. Connect the CLK, DT, and SW pins of the encoder to digital pins 4, 3, and 2 on the Arduino, respectively. Connect the '+' and GND pins of the encoder to 5V and GND on the Arduino, respectively.
    Connect the second rotary encoder in the same way. Connect CLK2, DT2, and SW2 to digital pins 7, 6, and 5 on the Arduino, respectively.
 
-2. **Pushbutton**
+2. **Pushbutton:**
    Connect one end of the pushbutton to digital pin 13 on the Arduino. Connect the other end of the pushbutton to the GND pin on the Arduino.
 
-3. **RGB LED**
+3. **RGB LED:**
    Connect the RGB LED's R, G, and B pins to digital pins 8, 9, and 10 on the Arduino, respectively. Connect the common cathode of the LED to the GND pin on the Arduino.
 
-4. **Upload Code**
+4. **Upload Code:**
    Once all components are connected, upload the provided Arduino code to your board.
 
 ## Software Setup
