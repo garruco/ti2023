@@ -32,10 +32,10 @@ Components needed:
 
 ## Software Setup
 
-1. **Processing**
+1. **Processing:**
    Install the Processing IDE on your computer. This is required to run the Processing sketch for this project.
 
-2. **Libraries**
+2. **Libraries:**
    You will need the following libraries for Processing:
 
 - OpenCV for Processing: Used for computer vision techniques.
@@ -43,7 +43,7 @@ Components needed:
 
 You can install these libraries from the Processing IDE itself.
 
-3. **Running the Sketch**
+3. **Running the Sketch:**
    Load the provided Processing sketch in the Processing IDE. Make sure the Arduino board is connected to your computer via USB and that the Arduino code is running. Run the Processing sketch.
 
 ## Configuration
