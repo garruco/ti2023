@@ -49,7 +49,7 @@ You can install these libraries from the Processing IDE itself.
 
 ## Configuration
 
-The application includes debug mode (boolean debug = false;). When enabled, it provides additional information on the canvas and prints relevant data to the console. This mode can be useful for calibration, debugging, and understanding the application's inner workings.
+The application includes debug mode (boolean debug). When enabled, it provides additional information on the canvas and prints relevant data to the console. This mode can be useful for calibration, debugging, and understanding the application's inner workings.
 
 The lightAreaThreshold and the opencv.threshold() function can be adjusted according to the brightness and area of your light source.
 
