@@ -147,6 +147,10 @@ void draw() {
   }
 
   popMatrix(); // End of the transformations
+  
+  // Display a mini tutorial when there's no modules stamped
+  textAlign(CENTER);
+  textSize(40);
 }
 
 // Function to handle serial events
