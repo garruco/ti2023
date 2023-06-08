@@ -151,6 +151,7 @@ void draw() {
   // Display a mini tutorial when there's no modules stamped
   textAlign(CENTER);
   textSize(40);
+  if(mod.size() < 1) text("USE YOUR PHONE FLASHLIGHT", width/2, height/2);
 }
 
 // Function to handle serial events
